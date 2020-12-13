@@ -9,7 +9,7 @@ public class server {
         try{
             File[] cartas = new File("/Users/rekoncarloz/Desktop/cartasServer").listFiles();
             String EECO="";
-            int pto=9999;
+            int pto=9000;
             ServerSocketChannel s = ServerSocketChannel.open();
             s.configureBlocking(false);
             s.socket().bind(new InetSocketAddress(pto));
@@ -28,7 +28,7 @@ public class server {
                         System.out.println("Mandando cartas...");
                         
                         
-                        for(File carta : cartas){
+                        for(int i = 0; i<cartas.length; i++){
                             
                         }
                         
