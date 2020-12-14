@@ -13,14 +13,12 @@ import java.util.Iterator;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author carloscobian
  */
 public class initPlayer extends javax.swing.JFrame {
 
-    
     public initPlayer() {
         initComponents();
     }
@@ -139,16 +137,17 @@ public class initPlayer extends javax.swing.JFrame {
                         System.out.println("Eco  de "+n+" bytes recibido: "+eco);
                         k.interestOps(SelectionKey.OP_WRITE);
                         continue;
-                    } 
+                    } /Users/rekoncarloz/Desktop/cartasServer
                 }//while   
             }//while
         }catch(Exception e){
             e.printStackTrace();
         }//catch
-        */
-        tablero player = new tablero(fieldAddress.toString(), username.toString());
+         */
+        tablero player = new tablero(fieldAddress.getText(), username.getText());
         player.setVisible(true);
-        
+        this.dispose();
+
     }//GEN-LAST:event_initBtnActionPerformed
 
     /**
