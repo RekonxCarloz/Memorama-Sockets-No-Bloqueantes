@@ -7,7 +7,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.Timer;
 
-
 public class tablero extends javax.swing.JFrame implements Runnable {
 
     private randomOrder log = new randomOrder();
@@ -216,8 +215,11 @@ public class tablero extends javax.swing.JFrame implements Runnable {
     public tablero(String address, String username) {
         initComponents();
         tiempoTrans.setEnabled(false);
+        endGame.setEnabled(false);
+        paresDestapados.setEnabled(false);
         this.address = address;
-        labelName.setText(username);
+        this.username = username;
+        labelName.setText(this.username);
         setTitle("Memorama");
         t = new Timer(10, acciones);
         ImageIcon foto = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/fondo.png");
@@ -321,7 +323,7 @@ public class tablero extends javax.swing.JFrame implements Runnable {
             im2.setDescription(des);
             pbtn[1] = btn;
             primerc = true;
-            paresDestapados.setText(String.valueOf(puntaje));
+            isWinner();
         }
     }
 
@@ -330,11 +332,22 @@ public class tablero extends javax.swing.JFrame implements Runnable {
             if (!im1.getDescription().equals(im2.getDescription())) {
                 pbtn[0].setEnabled(true);
                 pbtn[1].setEnabled(true);
-                if (pbtn[0] == pbtn[1]) {
-                    puntaje += 1;
-                }
+            } else {
+                puntaje += 1;
+                paresDestapados.setText(String.valueOf(puntaje));
             }
             caraUp = false;
+        }
+    }
+
+    private void isWinner() {
+        if (!jButton1.isEnabled() && !jButton2.isEnabled() && !jButton3.isEnabled() && !jButton4.isEnabled() && !jButton5.isEnabled() && !jButton6.isEnabled() && !jButton7.isEnabled() && !jButton8.isEnabled() && !jButton9.isEnabled() && !jButton10.isEnabled()
+                && !jButton11.isEnabled() && !jButton12.isEnabled() && !jButton13.isEnabled() && !jButton14.isEnabled() && !jButton15.isEnabled() && !jButton16.isEnabled() && !jButton17.isEnabled() && !jButton18.isEnabled() && !jButton19.isEnabled() && !jButton20.isEnabled()
+                && !jButton21.isEnabled() && !jButton22.isEnabled() && !jButton23.isEnabled() && !jButton24.isEnabled() && !jButton25.isEnabled() && !jButton26.isEnabled() && !jButton27.isEnabled() && !jButton28.isEnabled() && !jButton29.isEnabled() && !jButton30.isEnabled()
+                && !jButton31.isEnabled() && !jButton32.isEnabled() && !jButton33.isEnabled() && !jButton34.isEnabled() && !jButton35.isEnabled() && !jButton36.isEnabled() && !jButton37.isEnabled() && !jButton38.isEnabled() && !jButton39.isEnabled() && !jButton40.isEnabled()) {
+            t.stop();
+            String resultado = "Jugador: " + this.username + ", Tiempo transcurrido: " + h + ":" + m + ":" + s + ":" + cs + ", Pares encontrados: " + puntaje+1;
+            System.out.println(resultado);
         }
     }
 
@@ -391,7 +404,7 @@ public class tablero extends javax.swing.JFrame implements Runnable {
         menu = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         initGame = new javax.swing.JButton();
-        jButton42 = new javax.swing.JButton();
+        endGame = new javax.swing.JButton();
         labelName = new javax.swing.JLabel();
         menuTiempo = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -896,7 +909,12 @@ public class tablero extends javax.swing.JFrame implements Runnable {
             }
         });
 
-        jButton42.setText("TERMINAR JUEGO");
+        endGame.setText("TERMINAR JUEGO");
+        endGame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                endGameActionPerformed(evt);
+            }
+        });
 
         labelName.setFont(new java.awt.Font("Avenir", 1, 15)); // NOI18N
         labelName.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -909,7 +927,7 @@ public class tablero extends javax.swing.JFrame implements Runnable {
                 .addGap(0, 73, Short.MAX_VALUE)
                 .addGroup(menuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(initGame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton42, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(endGame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(59, 59, 59))
             .addGroup(menuLayout.createSequentialGroup()
                 .addGap(23, 23, 23)
@@ -928,7 +946,7 @@ public class tablero extends javax.swing.JFrame implements Runnable {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(initGame)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton42)
+                .addComponent(endGame)
                 .addContainerGap())
         );
 
@@ -944,6 +962,7 @@ public class tablero extends javax.swing.JFrame implements Runnable {
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
         tiempoTrans.setColumns(20);
+        tiempoTrans.setFont(new java.awt.Font("Avenir", 1, 18)); // NOI18N
         tiempoTrans.setRows(5);
         jScrollPane1.setViewportView(tiempoTrans);
 
@@ -951,7 +970,9 @@ public class tablero extends javax.swing.JFrame implements Runnable {
         jScrollPane3.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
         paresDestapados.setColumns(20);
+        paresDestapados.setFont(new java.awt.Font("Avenir", 1, 24)); // NOI18N
         paresDestapados.setRows(5);
+        paresDestapados.setToolTipText("");
         jScrollPane3.setViewportView(paresDestapados);
 
         javax.swing.GroupLayout menuTiempoLayout = new javax.swing.GroupLayout(menuTiempo);
@@ -1175,6 +1196,7 @@ public class tablero extends javax.swing.JFrame implements Runnable {
     private void initGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_initGameActionPerformed
         t.start();
         setImagenes();
+        endGame.setEnabled(true);
         jButton1.setEnabled(true);
         jButton2.setEnabled(true);
         jButton3.setEnabled(true);
@@ -1377,6 +1399,13 @@ public class tablero extends javax.swing.JFrame implements Runnable {
         comparar();
     }//GEN-LAST:event_jButton40MouseExited
 
+    private void endGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_endGameActionPerformed
+        t.stop();
+        String resultado = "Jugador: " + this.username + ", Tiempo transcurrido: " + h + ":" + m + ":" + s + ":" + cs + ", Pares encontrados: " + puntaje;
+        System.out.println(resultado);
+        this.dispose();
+    }//GEN-LAST:event_endGameActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1393,6 +1422,7 @@ public class tablero extends javax.swing.JFrame implements Runnable {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton endGame;
     private javax.swing.JButton initGame;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
@@ -1429,7 +1459,6 @@ public class tablero extends javax.swing.JFrame implements Runnable {
     private javax.swing.JButton jButton39;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton40;
-    private javax.swing.JButton jButton42;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;

@@ -8,6 +8,7 @@ public class server {
     public static void main(String[] args){
         try{
             File[] cartas = new File("/Users/rekoncarloz/Desktop/cartasServer").listFiles();
+            
             String EECO="";
             int pto=9000;
             ServerSocketChannel s = ServerSocketChannel.open();

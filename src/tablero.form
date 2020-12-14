@@ -314,7 +314,7 @@
                   <EmptySpace min="0" pref="73" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="initGame" max="32767" attributes="0"/>
-                      <Component id="jButton42" max="32767" attributes="0"/>
+                      <Component id="endGame" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="59" max="-2" attributes="0"/>
               </Group>
@@ -338,7 +338,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="initGame" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
-                  <Component id="jButton42" min="-2" max="-2" attributes="0"/>
+                  <Component id="endGame" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -362,10 +362,13 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="initGameActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="jButton42">
+        <Component class="javax.swing.JButton" name="endGame">
           <Properties>
             <Property name="text" type="java.lang.String" value="TERMINAR JUEGO"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="endGameActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="labelName">
           <Properties>
@@ -443,6 +446,9 @@
             <Component class="javax.swing.JTextArea" name="tiempoTrans">
               <Properties>
                 <Property name="columns" type="int" value="20"/>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Avenir" size="18" style="1"/>
+                </Property>
                 <Property name="rows" type="int" value="5"/>
               </Properties>
             </Component>
@@ -462,7 +468,11 @@
             <Component class="javax.swing.JTextArea" name="paresDestapados">
               <Properties>
                 <Property name="columns" type="int" value="20"/>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Avenir" size="24" style="1"/>
+                </Property>
                 <Property name="rows" type="int" value="5"/>
+                <Property name="toolTipText" type="java.lang.String" value=""/>
               </Properties>
             </Component>
           </SubComponents>
