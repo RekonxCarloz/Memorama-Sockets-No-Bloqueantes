@@ -7,15 +7,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.Timer;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-/**
- *
- * @author rekoncarloz
- */
+
 public class tablero extends javax.swing.JFrame implements Runnable {
 
     private randomOrder log = new randomOrder();
@@ -57,7 +49,8 @@ public class tablero extends javax.swing.JFrame implements Runnable {
     }
 
     private void setImagenes() {
-        position = log.ordenarandom();
+        //position = log.ordenarandom();
+        position = log.orderInOrder();
 
         ImageIcon image = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[0] + ".png");
         Icon icon = new ImageIcon(image.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
