@@ -1,12 +1,23 @@
 
 import java.io.BufferedReader;
+import java.io.*;
 import java.io.InputStreamReader;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -18,6 +29,8 @@ import java.util.Iterator;
  * @author carloscobian
  */
 public class initPlayer extends javax.swing.JFrame {
+
+    private static String direccion = "";
 
     public initPlayer() {
         initComponents();
@@ -40,10 +53,17 @@ public class initPlayer extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setText("Ingresa tu nombre");
+        jLabel1.setFont(new java.awt.Font("Avenir", 1, 24)); // NOI18N
+        jLabel1.setText("Ingresa tu nombre:");
 
-        jLabel2.setText("Indica donde se guardarán las cartas");
+        jLabel2.setFont(new java.awt.Font("Avenir", 1, 18)); // NOI18N
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("Recibir archivos en:");
+        jLabel2.setToolTipText("");
 
+        username.setFont(new java.awt.Font("Avenir", 1, 18)); // NOI18N
+
+        initBtn.setFont(new java.awt.Font("Avenir", 1, 14)); // NOI18N
         initBtn.setText("Crear Tablero");
         initBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -57,96 +77,92 @@ public class initPlayer extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(204, 204, 204)
-                .addComponent(username, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(username))
                 .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(130, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(234, 234, 234))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(fieldAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(125, 125, 125))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(179, 179, 179))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(initBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(225, 225, 225))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(237, 237, 237)
+                        .addComponent(initBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(127, 127, 127)
+                        .addComponent(fieldAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(128, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(192, 192, 192))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(55, 55, 55)
+                .addGap(15, 15, 15)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addComponent(username, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(57, 57, 57)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 60, Short.MAX_VALUE)
                 .addComponent(jLabel2)
-                .addGap(32, 32, 32)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(fieldAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(initBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addComponent(initBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(24, 24, 24))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void initBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_initBtnActionPerformed
-        /*
-        try{
-            String dir="127.0.0.1";
-            int pto = 9000;
-            ByteBuffer b1=null, b2=null;
-            InetSocketAddress dst = new InetSocketAddress(dir,pto);
-            SocketChannel cl = SocketChannel.open();
-             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            cl.configureBlocking(false);
-            Selector sel = Selector.open();
-            cl.register(sel, SelectionKey.OP_CONNECT);
-            cl.connect(dst);
-            while(true){
-                sel.select();
-                Iterator<SelectionKey>it = sel.selectedKeys().iterator();
-                while(it.hasNext()){
-                    SelectionKey k = (SelectionKey)it.next();
-                    it.remove();
-                    if(k.isConnectable()){
-                        SocketChannel ch = (SocketChannel)k.channel();
-                        if(ch.isConnectionPending()){
-                            System.out.println("Estableciendo conexion con el servidor... espere..");
-                            try{
-                                ch.finishConnect();
-                            }catch(Exception e){
-                                e.printStackTrace();
-                            }//catch
-                            System.out.println("Conexion establecida...\nEscribe texto <Enter> para enviar, SALIR para terminar:");
-                        }//if
-                        ch.register(sel, SelectionKey.OP_READ|SelectionKey.OP_WRITE);
+        try {
+            String host = "localhost";
+            int puerto = 9000;
+            File carpeta = new File(fieldAddress.getText() + "/imagenes");
+            carpeta.mkdir();
+            direccion = fieldAddress.getText() + "/imagenes";
+            ByteBuffer read = ByteBuffer.allocate(10240);
+            Selector selector = Selector.open();
+            SocketChannel conection = SocketChannel.open();
+            conection.connect(new InetSocketAddress("localhost", puerto));
+            read.flip();
+            conection.read(read);
+            //conection.register(selector, SelectionKey.OP_CONNECT);
+            
+            tablero tablero = new tablero(direccion, username.getText());
+            tablero.setVisible(true);
+            this.dispose();
+            
+            
+            
+            /*
+            while (true) {
+                selector.select();
+                Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
+                while (iterator.hasNext()) {
+                    SelectionKey key = iterator.next();
+                    iterator.remove();
+                    SocketChannel client = (SocketChannel) key.channel();
+
+                    if (key.isConnectable()) {
+                        if (client.isConnectionPending()) {
+                            System.out.println("Estableciendo conexión con el servidor");
+                            client.finishConnect();
+                        }
+                        client.register(selector, SelectionKey.OP_READ|SelectionKey.OP_WRITE);
                         continue;
-                    }//if
-                    if(k.isReadable()){
-                        SocketChannel ch = (SocketChannel)k.channel();
-                        b1 = ByteBuffer.allocate(2000);
-                        b1.clear();
-                        int n = ch.read(b1);
-                        b1.flip();
-                        String eco = new String(b1.array(),0,n);
-                        System.out.println("Eco  de "+n+" bytes recibido: "+eco);
-                        k.interestOps(SelectionKey.OP_WRITE);
-                        continue;
-                    } /Users/rekoncarloz/Desktop/cartasServer
-                }//while   
-            }//while
-        }catch(Exception e){
-            e.printStackTrace();
-        }//catch
-         */
-        tablero player = new tablero(fieldAddress.getText(), username.getText());
-        player.setVisible(true);
-        this.dispose();
+                    }
+                    if (key.isReadable()) {
+                        SocketChannel channel = (SocketChannel) key.channel();
+                        receiveFile(channel);
+                        channel.close();
+                    }
+                }
+            }
+            */
+        } catch (Exception e) {
+            System.out.println("Error en el socket: " + e.toString());
+        }
 
     }//GEN-LAST:event_initBtnActionPerformed
 
@@ -185,6 +201,7 @@ public class initPlayer extends javax.swing.JFrame {
         });
     }
 
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField fieldAddress;
     private javax.swing.JButton initBtn;
@@ -192,4 +209,39 @@ public class initPlayer extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JTextField username;
     // End of variables declaration//GEN-END:variables
+
+    private static void receiveFile(SocketChannel channel) {
+        try {
+            for (int i = 0; i <= 21; i++) {
+                String outputFile = "" + i+".png";
+                int bufferSize = 10240;
+                Path path = Paths.get(outputFile);
+                FileChannel fileChannel = FileChannel.open(path,
+                        EnumSet.of(StandardOpenOption.CREATE,
+                                StandardOpenOption.TRUNCATE_EXISTING,
+                                StandardOpenOption.WRITE));
+                ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
+                int res = 0;
+                int counter = 1;
+                do {
+                    buffer.clear();
+                    res = channel.read(buffer);
+                    System.out.println(res);
+                    buffer.flip();
+                    if (res > 0) {
+                        fileChannel.write(buffer);
+                        counter += res;
+                    }
+
+                } while (res >= 0);
+                channel.close();
+                fileChannel.close();
+                System.out.println("Recibido: " + counter);
+            }
+
+        } catch (IOException ex) {
+            Logger.getLogger(server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
 }

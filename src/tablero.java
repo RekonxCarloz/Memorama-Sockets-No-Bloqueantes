@@ -2,9 +2,12 @@
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.DataOutputStream;
+import java.net.*;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 public class tablero extends javax.swing.JFrame implements Runnable {
@@ -51,163 +54,163 @@ public class tablero extends javax.swing.JFrame implements Runnable {
         //position = log.ordenarandom();
         position = log.orderInOrder();
 
-        ImageIcon image = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[0] + ".png");
+        ImageIcon image = new ImageIcon(address+"/"+ position[0] + ".png");
         Icon icon = new ImageIcon(image.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton1.setDisabledIcon(icon);
 
-        ImageIcon image1 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[1] + ".png");
+        ImageIcon image1 = new ImageIcon(address+"/"+ position[1] + ".png");
         Icon icon1 = new ImageIcon(image1.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton2.setDisabledIcon(icon1);
 
-        ImageIcon image2 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[2] + ".png");
+        ImageIcon image2 = new ImageIcon(address+"/"+ position[2] + ".png");
         Icon icon2 = new ImageIcon(image2.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton3.setDisabledIcon(icon2);
 
-        ImageIcon image3 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[3] + ".png");
+        ImageIcon image3 = new ImageIcon(address+"/"+ position[3] + ".png");
         Icon icon3 = new ImageIcon(image3.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton4.setDisabledIcon(icon3);
 
-        ImageIcon image4 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[4] + ".png");
+        ImageIcon image4 = new ImageIcon(address+"/"+ position[4] + ".png");
         Icon icon4 = new ImageIcon(image4.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton5.setDisabledIcon(icon4);
 
-        ImageIcon image5 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[5] + ".png");
+        ImageIcon image5 = new ImageIcon(address+"/"+ position[5] + ".png");
         Icon icon5 = new ImageIcon(image5.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton6.setDisabledIcon(icon5);
 
-        ImageIcon image6 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[6] + ".png");
+        ImageIcon image6 = new ImageIcon(address+"/"+ position[6] + ".png");
         Icon icon6 = new ImageIcon(image6.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton7.setDisabledIcon(icon6);
 
-        ImageIcon image7 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[7] + ".png");
+        ImageIcon image7 = new ImageIcon(address+"/"+ position[7] + ".png");
         Icon icon7 = new ImageIcon(image7.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton8.setDisabledIcon(icon7);
 
-        ImageIcon image8 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[8] + ".png");
+        ImageIcon image8 = new ImageIcon(address+"/"+ position[8] + ".png");
         Icon icon8 = new ImageIcon(image8.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton9.setDisabledIcon(icon8);
 
-        ImageIcon image9 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[9] + ".png");
+        ImageIcon image9 = new ImageIcon(address+"/"+ position[9] + ".png");
         Icon icon9 = new ImageIcon(image9.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton10.setDisabledIcon(icon9);
 
-        ImageIcon image10 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[10] + ".png");
+        ImageIcon image10 = new ImageIcon(address+"/"+ position[10] + ".png");
         Icon icon10 = new ImageIcon(image10.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton11.setDisabledIcon(icon10);
 
-        ImageIcon image11 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[11] + ".png");
+        ImageIcon image11 = new ImageIcon(address+"/"+ position[11] + ".png");
         Icon icon11 = new ImageIcon(image11.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton12.setDisabledIcon(icon11);
 
-        ImageIcon image12 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[12] + ".png");
+        ImageIcon image12 = new ImageIcon(address+"/"+ position[12] + ".png");
         Icon icon12 = new ImageIcon(image12.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton13.setDisabledIcon(icon12);
 
-        ImageIcon image13 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[13] + ".png");
+        ImageIcon image13 = new ImageIcon(address+"/"+ position[13] + ".png");
         Icon icon13 = new ImageIcon(image13.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton14.setDisabledIcon(icon13);
 
-        ImageIcon image14 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[14] + ".png");
+        ImageIcon image14 = new ImageIcon(address+"/"+ position[14] + ".png");
         Icon icon14 = new ImageIcon(image14.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton15.setDisabledIcon(icon14);
 
-        ImageIcon image15 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[15] + ".png");
+        ImageIcon image15 = new ImageIcon(address+"/"+ position[15] + ".png");
         Icon icon15 = new ImageIcon(image15.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton16.setDisabledIcon(icon15);
 
-        ImageIcon image16 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[16] + ".png");
+        ImageIcon image16 = new ImageIcon(address+"/"+ position[16] + ".png");
         Icon icon16 = new ImageIcon(image16.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton17.setDisabledIcon(icon16);
 
-        ImageIcon image17 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[17] + ".png");
+        ImageIcon image17 = new ImageIcon(address+"/"+ position[17] + ".png");
         Icon icon17 = new ImageIcon(image17.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton18.setDisabledIcon(icon17);
 
-        ImageIcon image18 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[18] + ".png");
+        ImageIcon image18 = new ImageIcon(address+"/"+ position[18] + ".png");
         Icon icon18 = new ImageIcon(image18.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton19.setDisabledIcon(icon18);
 
-        ImageIcon image19 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[19] + ".png");
+        ImageIcon image19 = new ImageIcon(address+"/"+ position[19] + ".png");
         Icon icon19 = new ImageIcon(image19.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton20.setDisabledIcon(icon19);
 
-        ImageIcon image20 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[20] + ".png");
+        ImageIcon image20 = new ImageIcon(address+"/"+ position[20] + ".png");
         Icon icon20 = new ImageIcon(image20.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton21.setDisabledIcon(icon20);
 
-        ImageIcon image21 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[21] + ".png");
+        ImageIcon image21 = new ImageIcon(address+"/"+ position[21] + ".png");
         Icon icon21 = new ImageIcon(image21.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton22.setDisabledIcon(icon21);
 
-        ImageIcon image22 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[22] + ".png");
+        ImageIcon image22 = new ImageIcon(address+"/"+ position[22] + ".png");
         Icon icon22 = new ImageIcon(image22.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton23.setDisabledIcon(icon22);
 
-        ImageIcon image23 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[23] + ".png");
+        ImageIcon image23 = new ImageIcon(address+"/"+ position[23] + ".png");
         Icon icon23 = new ImageIcon(image23.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton24.setDisabledIcon(icon23);
 
-        ImageIcon image24 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[24] + ".png");
+        ImageIcon image24 = new ImageIcon(address+"/"+ position[24] + ".png");
         Icon icon24 = new ImageIcon(image24.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton25.setDisabledIcon(icon24);
 
-        ImageIcon image25 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[25] + ".png");
+        ImageIcon image25 = new ImageIcon(address+"/"+ position[25] + ".png");
         Icon icon25 = new ImageIcon(image25.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton26.setDisabledIcon(icon25);
 
-        ImageIcon image26 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[26] + ".png");
+        ImageIcon image26 = new ImageIcon(address+"/"+ position[26] + ".png");
         Icon icon26 = new ImageIcon(image26.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton27.setDisabledIcon(icon26);
 
-        ImageIcon image27 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[27] + ".png");
+        ImageIcon image27 = new ImageIcon(address+"/"+ position[27] + ".png");
         Icon icon27 = new ImageIcon(image27.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton28.setDisabledIcon(icon27);
 
-        ImageIcon image28 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[28] + ".png");
+        ImageIcon image28 = new ImageIcon(address+"/"+ position[28] + ".png");
         Icon icon28 = new ImageIcon(image28.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton29.setDisabledIcon(icon28);
 
-        ImageIcon image29 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[29] + ".png");
+        ImageIcon image29 = new ImageIcon(address+"/"+ position[29] + ".png");
         Icon icon29 = new ImageIcon(image29.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton30.setDisabledIcon(icon29);
 
-        ImageIcon image30 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[30] + ".png");
+        ImageIcon image30 = new ImageIcon(address+"/"+ position[30] + ".png");
         Icon icon30 = new ImageIcon(image30.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton31.setDisabledIcon(icon30);
 
-        ImageIcon image31 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[31] + ".png");
+        ImageIcon image31 = new ImageIcon(address+"/"+ position[31] + ".png");
         Icon icon31 = new ImageIcon(image31.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton32.setDisabledIcon(icon31);
 
-        ImageIcon image32 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[32] + ".png");
+        ImageIcon image32 = new ImageIcon(address+"/"+ position[32] + ".png");
         Icon icon32 = new ImageIcon(image32.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton33.setDisabledIcon(icon32);
 
-        ImageIcon image33 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[33] + ".png");
+        ImageIcon image33 = new ImageIcon(address+"/"+ position[33] + ".png");
         Icon icon33 = new ImageIcon(image33.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton34.setDisabledIcon(icon33);
 
-        ImageIcon image34 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[34] + ".png");
+        ImageIcon image34 = new ImageIcon(address+"/"+ position[34] + ".png");
         Icon icon34 = new ImageIcon(image34.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton35.setDisabledIcon(icon34);
 
-        ImageIcon image35 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[35] + ".png");
+        ImageIcon image35 = new ImageIcon(address+"/"+ position[35] + ".png");
         Icon icon35 = new ImageIcon(image35.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton36.setDisabledIcon(icon35);
 
-        ImageIcon image36 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[36] + ".png");
+        ImageIcon image36 = new ImageIcon(address+"/"+ position[36] + ".png");
         Icon icon36 = new ImageIcon(image36.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton37.setDisabledIcon(icon36);
 
-        ImageIcon image37 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[37] + ".png");
+        ImageIcon image37 = new ImageIcon(address+"/"+ position[37] + ".png");
         Icon icon37 = new ImageIcon(image37.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton38.setDisabledIcon(icon37);
 
-        ImageIcon image38 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[38] + ".png");
+        ImageIcon image38 = new ImageIcon(address+"/"+ position[38] + ".png");
         Icon icon38 = new ImageIcon(image38.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton39.setDisabledIcon(icon38);
 
-        ImageIcon image39 = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/" + position[39] + ".png");
+        ImageIcon image39 = new ImageIcon(address+"/"+ position[39] + ".png");
         Icon icon39 = new ImageIcon(image39.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton40.setDisabledIcon(icon39);
     }
@@ -222,7 +225,7 @@ public class tablero extends javax.swing.JFrame implements Runnable {
         labelName.setText(this.username);
         setTitle("Memorama");
         t = new Timer(10, acciones);
-        ImageIcon foto = new ImageIcon("/Users/rekoncarloz/Desktop/cartasServer/fondo.png");
+        ImageIcon foto = new ImageIcon(this.address+"/fondo.png");
         System.out.println(this.address);
         Icon icono = new ImageIcon(foto.getImage().getScaledInstance(jButton1.getWidth(), jButton1.getHeight(), WIDTH));
         jButton1.setIcon(icono);
@@ -346,8 +349,25 @@ public class tablero extends javax.swing.JFrame implements Runnable {
                 && !jButton21.isEnabled() && !jButton22.isEnabled() && !jButton23.isEnabled() && !jButton24.isEnabled() && !jButton25.isEnabled() && !jButton26.isEnabled() && !jButton27.isEnabled() && !jButton28.isEnabled() && !jButton29.isEnabled() && !jButton30.isEnabled()
                 && !jButton31.isEnabled() && !jButton32.isEnabled() && !jButton33.isEnabled() && !jButton34.isEnabled() && !jButton35.isEnabled() && !jButton36.isEnabled() && !jButton37.isEnabled() && !jButton38.isEnabled() && !jButton39.isEnabled() && !jButton40.isEnabled()) {
             t.stop();
-            String resultado = "Jugador: " + this.username + ", Tiempo transcurrido: " + h + ":" + m + ":" + s + ":" + cs + ", Pares encontrados: " + puntaje+1;
-            System.out.println(resultado);
+            JOptionPane.showMessageDialog(this, "Felicidades! Tu tiempo ha sido: "+h + ":" + m + ":" + s + ":" + cs," Enviando tus datos al servidor" ,JOptionPane.INFORMATION_MESSAGE);
+            try {
+                int puerto = 9000;
+                String host = "localhost";
+                Socket cl = new Socket(host, puerto);
+                DataOutputStream dos = new DataOutputStream(cl.getOutputStream());
+                dos.writeInt(h);
+                dos.writeInt(m);
+                dos.writeInt(s);
+                dos.writeInt(cs);
+                dos.writeUTF(labelName.getText());
+                dos.close();
+                cl.close();
+            } catch (Exception e) {
+                System.out.println("Error en la conexión "+e.toString());
+            }
+            initPlayer nuevo = new initPlayer();
+            nuevo.setVisible(true);
+            this.dispose();
         }
     }
 
@@ -1401,9 +1421,26 @@ public class tablero extends javax.swing.JFrame implements Runnable {
 
     private void endGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_endGameActionPerformed
         t.stop();
-        String resultado = "Jugador: " + this.username + ", Tiempo transcurrido: " + h + ":" + m + ":" + s + ":" + cs + ", Pares encontrados: " + puntaje;
-        System.out.println(resultado);
-        this.dispose();
+        JOptionPane.showMessageDialog(this, "Haz terminado tu partida, con "+paresDestapados.getText()+" pares encontrados. Tu tiempo ha sido: "+h + ":" + m + ":" + s + ":" + cs," Enviando tus datos al servidor" ,JOptionPane.INFORMATION_MESSAGE);
+            try {
+                int puerto = 9000;
+                String host = "localhost";
+                Socket cl = new Socket(host, puerto);
+                DataOutputStream dos = new DataOutputStream(cl.getOutputStream());
+                dos.writeInt(Integer.parseInt(paresDestapados.getText()));
+                dos.writeInt(h);
+                dos.writeInt(m);
+                dos.writeInt(s);
+                dos.writeInt(cs);
+                dos.writeUTF(labelName.getText());
+                dos.close();
+                cl.close();
+            } catch (Exception e) {
+                System.out.println("Error en la conexión "+e.toString());
+            }
+            initPlayer nuevo = new initPlayer();
+            nuevo.setVisible(true);
+            this.dispose();
     }//GEN-LAST:event_endGameActionPerformed
 
     /**

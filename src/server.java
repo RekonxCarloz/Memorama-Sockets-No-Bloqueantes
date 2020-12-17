@@ -1,62 +1,92 @@
+
 import java.io.*;
 import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class server {
-    public static void main(String[] args){
-        try{
-            File[] cartas = new File("/Users/rekoncarloz/Desktop/cartasServer").listFiles();
-            
-            String EECO="";
-            int pto=9000;
-            ServerSocketChannel s = ServerSocketChannel.open();
-            s.configureBlocking(false);
-            s.socket().bind(new InetSocketAddress(pto));
-            System.out.println("Esperando jugadores...");
-            Selector sel = Selector.open();
-            s.register(sel, SelectionKey.OP_ACCEPT);
-            while(true){
-                sel.select();
-                Iterator<SelectionKey>it = sel.selectedKeys().iterator();
-                while(it.hasNext()){
-                    SelectionKey k = (SelectionKey)it.next();
-                    it.remove();
-                    if(k.isAcceptable()){
-                        SocketChannel cl = s.accept();
-                        System.out.println("Cliente conectado desde" + cl.socket().getInetAddress() + ":" + cl.socket().getPort());
-                        System.out.println("Mandando cartas...");
-                        
-                        
-                        for(int i = 0; i<cartas.length; i++){
-                            
-                        }
-                        
+
+    private static String host = "localhost";
+    private static int port = 9000;
+
+    public static void main(String[] args) {
+
+        try {
+            Selector selector = Selector.open();
+            ServerSocketChannel server = ServerSocketChannel.open();
+            server.configureBlocking(false);
+            server.bind(new InetSocketAddress(9000));
+            server.register(selector, SelectionKey.OP_ACCEPT);
+
+            while (true) {
+                selector.select();
+                Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
+                while (iterator.hasNext()) {
+                    SelectionKey key = iterator.next();
+                    iterator.remove();
+
+                    if (key.isAcceptable()) {
+                        SocketChannel cl = server.accept();
                         cl.configureBlocking(false);
-                        cl.register(sel,SelectionKey.OP_READ|SelectionKey.OP_WRITE);
+                        cl.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+                        System.out.println("isAcceptable");
+                        key.attach(cl);
                         continue;
-                    }//if
-                    if(k.isReadable()){
-                        try{
-                            SocketChannel ch = (SocketChannel)k.channel();
-                            ByteBuffer b = ByteBuffer.allocate(2000);
-                            b.clear();
-                            int n=0; 
-                            String msj="";
-                            n=ch.read(b);
-                            b.flip();
-                            if (msj.equalsIgnoreCase("SALIR")){
-                                k.interestOps(SelectionKey.OP_WRITE);
-                                ch.close();
+                    } else {
+                        if (key.isWritable()) {
+                            System.out.println("Conexion de escritura");
+                            SocketChannel cl2 = (SocketChannel) key.channel();
+                            File[] cartas = new File("/Users/rekoncarloz/Desktop/cartasServer").listFiles();
+                            for (int i = 0; i <= cartas.length; i++) {
+                                try {
+                                    String fileName = cartas[i].getName();
+                                    byte[] nameBytes = fileName.getBytes("UTF-8");
+                                    ByteBuffer nameBuffer = ByteBuffer.wrap(nameBytes);
+                                    cl2.write(nameBuffer);
+                                    int bufferSize = 10240;
+                                    Path path = Paths.get(cartas[i].getAbsolutePath());
+                                    FileChannel fileChannel = FileChannel.open(path);
+                                    ByteBuffer buff = ByteBuffer.allocate(bufferSize);
+                                    int noOfBytesRead = 0;
+                                    int counter = 1;
+                                    do {
+                                        noOfBytesRead = fileChannel.read(buff);
+                                        if (noOfBytesRead <= 0) {
+                                            break;
+                                        }
+                                        counter += noOfBytesRead;
+                                        buff.flip();
+                                        do {
+                                            noOfBytesRead -= cl2.write(buff);
+                                        } while (noOfBytesRead > 0);
+                                        buff.clear();
+                                    } while (true);
+                                    fileChannel.close();
+                                    System.out.println("Imagen " + i + " Enviada");
+
+                                } catch (IOException ex) {
+                                    Logger.getLogger(server.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+
                             }
-                        }catch(IOException io){}
-                        continue;
+                            cl2.close();
+                            return;
+                        }
                     }
-                }//while
-            }//while
-        }catch(Exception e){
-            e.printStackTrace();
-        }//catch
-    }//main
+
+                }
+            }
+        } //main
+        catch (IOException ex) {
+            Logger.getLogger(server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
 }
