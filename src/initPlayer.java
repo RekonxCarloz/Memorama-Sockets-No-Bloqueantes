@@ -7,10 +7,12 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.nio.channels.WritableByteChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -18,6 +20,7 @@ import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingConstants;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -31,6 +34,8 @@ import java.util.logging.Logger;
 public class initPlayer extends javax.swing.JFrame {
 
     private static String direccion = "";
+
+    static int cont = 0;
 
     public initPlayer() {
         initComponents();
@@ -121,47 +126,45 @@ public class initPlayer extends javax.swing.JFrame {
             File carpeta = new File(fieldAddress.getText() + "/imagenes");
             carpeta.mkdir();
             direccion = fieldAddress.getText() + "/imagenes";
-            ByteBuffer read = ByteBuffer.allocate(10240);
-            Selector selector = Selector.open();
+
             SocketChannel conection = SocketChannel.open();
             conection.connect(new InetSocketAddress("localhost", puerto));
-            read.flip();
-            conection.read(read);
-            //conection.register(selector, SelectionKey.OP_CONNECT);
-            
+            conection.configureBlocking(false);
+
+            if (cont < 22) {
+
+                Path path = Paths.get(direccion + "/" + cont + ".jpg");
+                FileChannel fileChannel = FileChannel.open(path, EnumSet.of(
+                        StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE));
+                
+                ByteBuffer fileTam = ByteBuffer.allocate(5);
+                fileTam.clear();
+                int n = conection.read(fileTam);
+                fileTam.flip();
+                
+                String sizeI = new String(fileTam.array(), 0, n);
+                ByteBuffer buffer = ByteBuffer.allocate(1024);
+                System.out.println("Tamaño " + sizeI);
+                buffer.clear();
+                
+                int aux = 0;
+                while (conection.read(buffer) > 0 || aux < Integer.valueOf(sizeI)) {
+                    aux++;
+                    buffer.flip();
+                    fileChannel.write(buffer);
+                    buffer.compact();
+                }
+                System.out.println("imagen Recibida");
+                cont++;
+                fileChannel.close();
+                conection.close();
+            }
             tablero tablero = new tablero(direccion, username.getText());
             tablero.setVisible(true);
             this.dispose();
-            
-            
-            
-            /*
-            while (true) {
-                selector.select();
-                Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
-                while (iterator.hasNext()) {
-                    SelectionKey key = iterator.next();
-                    iterator.remove();
-                    SocketChannel client = (SocketChannel) key.channel();
 
-                    if (key.isConnectable()) {
-                        if (client.isConnectionPending()) {
-                            System.out.println("Estableciendo conexión con el servidor");
-                            client.finishConnect();
-                        }
-                        client.register(selector, SelectionKey.OP_READ|SelectionKey.OP_WRITE);
-                        continue;
-                    }
-                    if (key.isReadable()) {
-                        SocketChannel channel = (SocketChannel) key.channel();
-                        receiveFile(channel);
-                        channel.close();
-                    }
-                }
-            }
-            */
         } catch (Exception e) {
-            System.out.println("Error en el socket: " + e.toString());
+            e.printStackTrace();
         }
 
     }//GEN-LAST:event_initBtnActionPerformed
@@ -210,38 +213,4 @@ public class initPlayer extends javax.swing.JFrame {
     private javax.swing.JTextField username;
     // End of variables declaration//GEN-END:variables
 
-    private static void receiveFile(SocketChannel channel) {
-        try {
-            for (int i = 0; i <= 21; i++) {
-                String outputFile = "" + i+".png";
-                int bufferSize = 10240;
-                Path path = Paths.get(outputFile);
-                FileChannel fileChannel = FileChannel.open(path,
-                        EnumSet.of(StandardOpenOption.CREATE,
-                                StandardOpenOption.TRUNCATE_EXISTING,
-                                StandardOpenOption.WRITE));
-                ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
-                int res = 0;
-                int counter = 1;
-                do {
-                    buffer.clear();
-                    res = channel.read(buffer);
-                    System.out.println(res);
-                    buffer.flip();
-                    if (res > 0) {
-                        fileChannel.write(buffer);
-                        counter += res;
-                    }
-
-                } while (res >= 0);
-                channel.close();
-                fileChannel.close();
-                System.out.println("Recibido: " + counter);
-            }
-
-        } catch (IOException ex) {
-            Logger.getLogger(server.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
 }

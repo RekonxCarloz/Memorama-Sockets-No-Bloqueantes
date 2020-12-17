@@ -13,6 +13,8 @@ import java.util.logging.Logger;
 
 public class server {
 
+    static int iteradorImg = 0;
+    static int c = 0;
     private static String host = "localhost";
     private static int port = 9000;
 
@@ -35,52 +37,44 @@ public class server {
                     if (key.isAcceptable()) {
                         SocketChannel cl = server.accept();
                         cl.configureBlocking(false);
-                        cl.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
-                        System.out.println("isAcceptable");
+                        cl.register(selector, SelectionKey.OP_WRITE);
+                        System.out.println("Un cliente se conectó");
                         key.attach(cl);
-                        continue;
-                    } else {
-                        if (key.isWritable()) {
-                            System.out.println("Conexion de escritura");
-                            SocketChannel cl2 = (SocketChannel) key.channel();
-                            File[] cartas = new File("/Users/rekoncarloz/Desktop/cartasServer").listFiles();
-                            for (int i = 0; i <= cartas.length; i++) {
-                                try {
-                                    String fileName = cartas[i].getName();
-                                    byte[] nameBytes = fileName.getBytes("UTF-8");
-                                    ByteBuffer nameBuffer = ByteBuffer.wrap(nameBytes);
-                                    cl2.write(nameBuffer);
-                                    int bufferSize = 10240;
-                                    Path path = Paths.get(cartas[i].getAbsolutePath());
-                                    FileChannel fileChannel = FileChannel.open(path);
-                                    ByteBuffer buff = ByteBuffer.allocate(bufferSize);
-                                    int noOfBytesRead = 0;
-                                    int counter = 1;
-                                    do {
-                                        noOfBytesRead = fileChannel.read(buff);
-                                        if (noOfBytesRead <= 0) {
-                                            break;
-                                        }
-                                        counter += noOfBytesRead;
-                                        buff.flip();
-                                        do {
-                                            noOfBytesRead -= cl2.write(buff);
-                                        } while (noOfBytesRead > 0);
-                                        buff.clear();
-                                    } while (true);
-                                    fileChannel.close();
-                                    System.out.println("Imagen " + i + " Enviada");
+                    } else if (key.isWritable()) {
+                        SocketChannel ch = (SocketChannel) key.channel();
+                        try {
+                            if (iteradorImg < 21) {
+                                String nombreImg = "" + String.valueOf(iteradorImg);
+                                Path newPath = Paths.get("/Users/rekoncarloz/Desktop/cartasServer/" + nombreImg + ".jpg");
+                                System.out.println(newPath);
+                                FileChannel inChannel = FileChannel.open(newPath);
 
-                                } catch (IOException ex) {
-                                    Logger.getLogger(server.class.getName()).log(Level.SEVERE, null, ex);
+                                //Envio del tam de imagen
+                                long espera = inChannel.size();
+                                byte[] fileTam = String.valueOf(espera).getBytes();
+                                ByteBuffer buff = ByteBuffer.wrap(fileTam);
+                                buff.clear();
+                                ch.write(buff);
+
+                                //Envio de la imagen
+                                ByteBuffer buffer = ByteBuffer.allocate(1024);
+                                buffer.clear();
+                                System.out.println(inChannel.size());
+                                while (inChannel.read(buffer) > 0 || c<inChannel.size()) {
+                                    c++;
+                                    buffer.flip();
+                                    ch.write(buffer);
+                                    buffer.compact();
                                 }
-
+                                inChannel.close();
+                                ++iteradorImg;
                             }
-                            cl2.close();
-                            return;
-                        }
-                    }
 
+                        } catch (IOException ex) {
+
+                        }
+
+                    }
                 }
             }
         } //main
