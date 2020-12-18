@@ -22,7 +22,7 @@ public class tablero extends javax.swing.JFrame implements Runnable {
     int[] position;
     private Timer t;
     private int h, m, s, cs;
-    private String address, username;
+    public String address, username;
 
     private ActionListener acciones = new ActionListener() {
         @Override
@@ -217,6 +217,7 @@ public class tablero extends javax.swing.JFrame implements Runnable {
 
     public tablero(String address, String username) {
         initComponents();
+        this.repaint();
         tiempoTrans.setEnabled(false);
         endGame.setEnabled(false);
         paresDestapados.setEnabled(false);
@@ -307,7 +308,7 @@ public class tablero extends javax.swing.JFrame implements Runnable {
         jButton39.setEnabled(false);
         jButton40.setIcon(icono);
         jButton40.setEnabled(false);
-        this.repaint();
+        //this.repaint();
     }
 
     private void buttonPressed(JButton btn, int pos) {
@@ -1421,22 +1422,7 @@ public class tablero extends javax.swing.JFrame implements Runnable {
     private void endGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_endGameActionPerformed
         t.stop();
         JOptionPane.showMessageDialog(this, "Haz terminado tu partida, con "+paresDestapados.getText()+" pares encontrados. Tu tiempo ha sido: "+h + ":" + m + ":" + s + ":" + cs," Enviando tus datos al servidor" ,JOptionPane.INFORMATION_MESSAGE);
-            try {
-                int puerto = 9000;
-                String host = "localhost";
-                Socket cl = new Socket(host, puerto);
-                DataOutputStream dos = new DataOutputStream(cl.getOutputStream());
-                dos.writeInt(Integer.parseInt(paresDestapados.getText()));
-                dos.writeInt(h);
-                dos.writeInt(m);
-                dos.writeInt(s);
-                dos.writeInt(cs);
-                dos.writeUTF(labelName.getText());
-                dos.close();
-                cl.close();
-            } catch (Exception e) {
-                System.out.println("Error en la conexión "+e.toString());
-            }
+            
             initPlayer nuevo = new initPlayer();
             nuevo.setVisible(true);
             this.dispose();
@@ -1448,13 +1434,14 @@ public class tablero extends javax.swing.JFrame implements Runnable {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-
+                
             }
         });
     }
 
     @Override
     public void run() {
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

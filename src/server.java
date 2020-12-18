@@ -13,14 +13,15 @@ import java.util.logging.Logger;
 
 public class server {
 
-    static int iteradorImg = 0;
-    static int c = 0;
+    
     private static String host = "localhost";
     private static int port = 9000;
+    private static boolean pet = false;
 
     public static void main(String[] args) {
 
         try {
+            int iteradorImg = 0;
             Selector selector = Selector.open();
             ServerSocketChannel server = ServerSocketChannel.open();
             server.configureBlocking(false);
@@ -35,52 +36,92 @@ public class server {
                     iterator.remove();
 
                     if (key.isAcceptable()) {
+                        //El selector solo avisa ya es cuestion nuestra hacer el accept
                         SocketChannel cl = server.accept();
+                        System.out.println("Cliente conectado desde" + cl.socket().getInetAddress() + ":" + cl.socket().getPort()); //Tomo el puert
+                        System.out.println("Se procedera a enviarle todas las fotos! ");
+                        //Se hace el socket no bloqueante para que entren mas clientes
                         cl.configureBlocking(false);
-                        cl.register(selector, SelectionKey.OP_WRITE);
-                        System.out.println("Un cliente se conectó");
-                        key.attach(cl);
-                    } else if (key.isWritable()) {
-                        SocketChannel ch = (SocketChannel) key.channel();
+                        
+                        // como el cliente tiene su propio socket chanel se vincula su socket chanel al register de aqui
+                        // en este caso se hace al de lectura y escritura.
+                        cl.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+                        continue;
+                    }//if
+                    //Lectura el cliente escirbio algo en mi buffer
+                    if (key.isReadable()) {
                         try {
-                            if (iteradorImg < 21) {
-                                String nombreImg = "" + String.valueOf(iteradorImg);
-                                Path newPath = Paths.get("/Users/rekoncarloz/Desktop/cartasServer/" + nombreImg + ".jpg");
-                                System.out.println(newPath);
-                                FileChannel inChannel = FileChannel.open(newPath);
+                            //Nos interesa saber que canal fue el que lo hizo
+                            SocketChannel ch = (SocketChannel) key.channel();
+//                            Se creea un buffer como intermediario
+                            ByteBuffer b = ByteBuffer.allocate(2000);
+                            b.clear();
+                            int n = 0;
+                            String msj = "";
+                            n = ch.read(b);
+//                            Ajusta mi buffer ára trabajar con el
+                            b.flip();
+                            if (n > 0) {
+                                msj = new String(b.array(), 0, n);
+                            }
+                            System.out.println("Mensaje de " + n + " bytes recibido:" + msj);
 
-                                //Envio del tam de imagen
-                                long espera = inChannel.size();
-                                byte[] fileTam = String.valueOf(espera).getBytes();
-                                ByteBuffer buff = ByteBuffer.wrap(fileTam);
-                                buff.clear();
-                                ch.write(buff);
+                            if (msj.equals("solImagenes")) {
 
-                                //Envio de la imagen
-                                ByteBuffer buffer = ByteBuffer.allocate(1024);
-                                buffer.clear();
-                                System.out.println(inChannel.size());
-                                while (inChannel.read(buffer) > 0 || c<inChannel.size()) {
-                                    c++;
-                                    buffer.flip();
-                                    ch.write(buffer);
-                                    buffer.compact();
-                                }
-                                inChannel.close();
-                                ++iteradorImg;
+                                pet = true;
+
+                                key.interestOps(SelectionKey.OP_WRITE);
+                                msj = "";
+
                             }
 
-                        } catch (IOException ex) {
+                        } catch (IOException e) {
 
                         }
+                    } else if (key.isWritable()) { //Mi socketchanel esta listo para escribir algo y se envie
+                        SocketChannel ch = (SocketChannel) key.channel();
 
+                        try {
+                            if (pet) {
+                                if (iteradorImg < 21) {
+                                    String nombreImg = "" + String.valueOf(iteradorImg);
+                                    Path newPath = Paths.get("/Users/rekoncarloz/Desktop/cartasServer/" + nombreImg + ".jpg");
+                                    System.out.println(newPath);
+                                    FileChannel inChannel = FileChannel.open(newPath);
+
+                                    //Envio del tam de imagen
+                                    long espera = inChannel.size();
+                                    byte[] envio = String.valueOf(espera).getBytes();
+                                    ByteBuffer b2 = ByteBuffer.wrap(envio);
+                                    ch.write(b2);
+
+                                    //Envio de la imagen
+                                    ByteBuffer buffer = ByteBuffer.allocate(1024);
+                                    buffer.clear();
+                                    int c = 0;
+                                    while (inChannel.read(buffer) > 0 || c < inChannel.size()) {
+                                        c++;
+                                        buffer.flip();
+                                        ch.write(buffer);
+                                        buffer.compact();
+
+                                    }
+                                    inChannel.close();
+                                    if (iteradorImg == 20) {
+                                        pet = false;
+                                    }
+                                    ++iteradorImg;
+                                }
+                            }
+                        } //main
+                        catch (IOException e) {
+
+                        }
                     }
                 }
             }
-        } //main
-        catch (IOException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(server.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 }

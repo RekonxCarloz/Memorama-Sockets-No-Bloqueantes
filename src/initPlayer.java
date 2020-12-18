@@ -33,12 +33,17 @@ import javax.swing.SwingConstants;
  */
 public class initPlayer extends javax.swing.JFrame {
 
-    private static String direccion = "";
-
-    static int cont = 0;
+    private static boolean pedir = true;
+    private static boolean flagDir = true;
+    private static boolean verificarArchivos = false;
+    private static boolean pedirArchivos = true;
+    private static tablero tablero;
+    private static String direccion;
 
     public initPlayer() {
         initComponents();
+        direccion = "";
+
     }
 
     /**
@@ -86,19 +91,18 @@ public class initPlayer extends javax.swing.JFrame {
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(username))
                 .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(237, 237, 237)
-                        .addComponent(initBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(127, 127, 127)
-                        .addComponent(fieldAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(128, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(192, 192, 192))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(127, 127, 127)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(fieldAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(initBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(85, 85, 85)))
+                .addContainerGap(128, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -120,52 +124,107 @@ public class initPlayer extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void initBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_initBtnActionPerformed
+
+        String host = "localhost";
+        int puerto = 9000;
+        int correctosArchivos = 0;
+        direccion = fieldAddress.getText() + "/imagenes";
+
         try {
-            String host = "localhost";
-            int puerto = 9000;
-            File carpeta = new File(fieldAddress.getText() + "/imagenes");
-            carpeta.mkdir();
-            direccion = fieldAddress.getText() + "/imagenes";
+            InetSocketAddress dst = new InetSocketAddress(host, puerto);
+            SocketChannel cl = SocketChannel.open();
 
-            SocketChannel conection = SocketChannel.open();
-            conection.connect(new InetSocketAddress("localhost", puerto));
-            conection.configureBlocking(false);
+            cl.configureBlocking(false);
+            Selector sel = Selector.open();
+            cl.register(sel, SelectionKey.OP_CONNECT);
+            cl.connect(dst);
+            while (true) {
+                sel.select();
+                Iterator<SelectionKey> it = sel.selectedKeys().iterator();
+                while (it.hasNext()) {
+                    SelectionKey k = (SelectionKey) it.next();
 
-            if (cont < 22) {
+                    it.remove();
+                    if (k.isConnectable()) {
 
-                Path path = Paths.get(direccion + "/" + cont + ".jpg");
-                FileChannel fileChannel = FileChannel.open(path, EnumSet.of(
-                        StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE));
-                
-                ByteBuffer fileTam = ByteBuffer.allocate(5);
-                fileTam.clear();
-                int n = conection.read(fileTam);
-                fileTam.flip();
-                
-                String sizeI = new String(fileTam.array(), 0, n);
-                ByteBuffer buffer = ByteBuffer.allocate(1024);
-                System.out.println("Tamaño " + sizeI);
-                buffer.clear();
-                
-                int aux = 0;
-                while (conection.read(buffer) > 0 || aux < Integer.valueOf(sizeI)) {
-                    aux++;
-                    buffer.flip();
-                    fileChannel.write(buffer);
-                    buffer.compact();
+                        SocketChannel ch = (SocketChannel) k.channel();
+
+                        if (ch.isConnectionPending()) {
+                            System.out.println("Estableciendo conexion con el servidor... espere..");
+
+                            try {
+                                ch.finishConnect();
+                            } catch (Exception e) {
+                            }//catch
+
+                            System.out.println("Conexion establecida...\n");
+                        }//if
+                        //una vez establecida la conexion se agrega al selector mi canal y se le pone lo de leer y escirbir
+                        ch.register(sel, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+                        continue;
+                    }//if
+                    if (k.isReadable()) {
+                        SocketChannel ch = (SocketChannel) k.channel();
+
+                        if (verificarArchivos && correctosArchivos < 21) {
+                            if (flagDir) {
+                                File carpeta = new File(fieldAddress.getText() + "/imagenes");
+                                carpeta.mkdir();
+                                flagDir = false;
+                            }
+                            String nameImg = "" + String.valueOf(correctosArchivos) + ".jpg";
+                            Path path = Paths.get(direccion + "/" + nameImg);
+                            FileChannel fileChannel = FileChannel.open(path, EnumSet.of(
+                                    StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE));
+
+                            //Recivimos el tama?o de la imagen
+                            ByteBuffer tempB = ByteBuffer.allocate(5);
+                            tempB.clear();
+                            int n = ch.read(tempB);
+                            tempB.flip();
+                            String sizeI = new String(tempB.array(), 0, n);
+                            ByteBuffer buffer = ByteBuffer.allocate(1024);
+                            int auxTamImg = 0;
+                                buffer.clear();
+                            while (ch.read(buffer) > 0 || auxTamImg < Integer.valueOf(sizeI)) {
+                                auxTamImg++;
+                                buffer.flip();
+                                fileChannel.write(buffer);
+                                //buffer.clear();
+                                buffer.compact();
+                            }
+                            fileChannel.close();
+                            if (correctosArchivos == 20) {
+                                pedirArchivos = false;
+                                tablero = new tablero(direccion, username.getText());
+                                tablero.setVisible(true);
+                                this.dispose();
+                            }
+                            correctosArchivos++;
+                        }
+                    } else if (k.isWritable()) {
+                        SocketChannel ch = (SocketChannel) k.channel();
+                        if (pedirArchivos) {
+                            String pedir = "solImagenes";
+                            byte[] envio = pedir.getBytes();
+                            ByteBuffer b2 = ByteBuffer.wrap(envio);
+                            ch.write(b2);
+                            verificarArchivos = true;
+                            k.interestOps(SelectionKey.OP_READ);
+                        }
+
+                        //if      
+                        continue;
+                    } //if
+
                 }
-                System.out.println("imagen Recibida");
-                cont++;
-                fileChannel.close();
-                conection.close();
-            }
-            tablero tablero = new tablero(direccion, username.getText());
-            tablero.setVisible(true);
-            this.dispose();
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            }
+
+        } catch (IOException ex) {
+            Logger.getLogger(initPlayer.class.getName()).log(Level.SEVERE, null, ex);
         }
+
 
     }//GEN-LAST:event_initBtnActionPerformed
 
@@ -183,16 +242,24 @@ public class initPlayer extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(initPlayer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(initPlayer.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(initPlayer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(initPlayer.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(initPlayer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(initPlayer.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(initPlayer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(initPlayer.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
